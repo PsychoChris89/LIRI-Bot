@@ -2,9 +2,13 @@
 
 //Loading modules
 var Twitter = require('twitter');
+var spotify = require('spotify');
+var request = require('request');
+var fs = require('fs');
 var keys = require("./keys.js");
 var tweetsArray = [];
 var command = process.argv[2];
+var commandParam = process.argv[3];
 
 
 
@@ -19,13 +23,24 @@ var client = new Twitter({
   access_token_secret: twitterKeys.access_token_secret
 });
 
+spotify.search({ type: 'track', query: 'dancing in the moonlight' }, function(err, data) {
+    if (err) {
+        console.log('Error occurred: ' + err);
+        return;
+    }
+
+    console.log(data);
+ 
+    // Do something with 'data' 
+});
+
 
 //-----------------------FUNCTIONS-----------------------------------------------
 
 function getMyTweets(){
 
-	var params = {count: 20, exclude_replies:true, trim_user:true};
-		client.get('statuses/home_timeline', params, function(error, tweets, response) {
+	var params = {screen_name: 'jincygeorge8388', count: 20, exclude_replies:true, trim_user:true};
+		client.get('statuses/user_timeline', params, function(error, tweets, response) {
 				if (!error) {
 					//console.log(tweets);
 					tweetsArray = tweets;
@@ -36,10 +51,23 @@ function getMyTweets(){
 						console.log('--------------------------------------');
 					}
 				}
+				else{
+					console.log(error);
+				}
 	});
 
 }
 
+function doWhatItSays(){
+	fs.readFile('random.txt', 'utf8', function(err, data){
+
+		if (err){ 
+			return console.log(err);
+		}
+
+		console.log(data);
+	});
+}
 
 
 
@@ -48,10 +76,11 @@ function getMyTweets(){
 switch(command){
 
 	case 'my-tweets':
-		getMyTweets();
+		getMyTweets(); break;
 	case 'spotify-this-song':
 	case 'movie-this':
 	case 'do-what-it-says':
+		doWhatItSays(); break;
 	default: 
-		console.log("Invalid command. Please type any of the following commnds: my-tweets spotify-this-song movie-this or do-what-it-says")
+		console.log("Invalid command. Please type any of the following commnds: my-tweets spotify-this-song movie-this or do-what-it-says");
 }
