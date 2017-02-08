@@ -23,16 +23,6 @@ var client = new Twitter({
   access_token_secret: twitterKeys.access_token_secret
 });
 
-spotify.search({ type: 'track', query: 'dancing in the moonlight' }, function(err, data) {
-    if (err) {
-        console.log('Error occurred: ' + err);
-        return;
-    }
-
-    console.log(data);
- 
-    // Do something with 'data' 
-});
 
 
 //-----------------------FUNCTIONS-----------------------------------------------
@@ -58,6 +48,34 @@ function getMyTweets(){
 
 }
 
+function spotifyThis(){
+
+	spotify.search({ type: 'track', query: commandParam}, function(err, data) {
+    if (err) {
+        console.log('Error occurred: ' + err);
+        return;
+    }
+
+    //console.log(data.tracks.items[0]);
+    var song = data.tracks.items[0];
+    console.log("------Artists-----");
+    for(i=0; i<song.artists.length; i++){
+    	console.log(song.artists[i].name);
+    }
+
+    console.log("------Song Name-----");
+    console.log(song.name);
+
+	console.log("-------Preview Link-----");
+    console.log(song.preview_url);
+
+    console.log("-------Album-----");
+    console.log(song.album.name);
+
+	});
+
+}
+
 function doWhatItSays(){
 	fs.readFile('random.txt', 'utf8', function(err, data){
 
@@ -78,6 +96,7 @@ switch(command){
 	case 'my-tweets':
 		getMyTweets(); break;
 	case 'spotify-this-song':
+		spotifyThis(); break;
 	case 'movie-this':
 	case 'do-what-it-says':
 		doWhatItSays(); break;
