@@ -48,9 +48,9 @@ function getMyTweets(){
 
 }
 
-function spotifyThis(){
+function spotifyThis(song){
 
-	spotify.search({ type: 'track', query: commandParam}, function(err, data) {
+	spotify.search({ type: 'track', query: song}, function(err, data) {
     if (err) {
         console.log('Error occurred: ' + err);
         return;
@@ -76,6 +76,26 @@ function spotifyThis(){
 
 }
 
+function movieThis(){
+
+	request("https://api.themoviedb.org/3/search/movie?api_key=8d5f41f6535c312ee8ea248cecd733f7&query=Jack+Reacher", function(error, response, body) {
+
+  	// If there were no errors and the response code was 200 (i.e. the request was successful)...
+  	if (!error && response.statusCode === 200) {
+
+    // Then we print out the imdbRating
+    //console.log(response.IncomingMessage.body.results);
+	    console.log(JSON.parse(body).results[0]);
+	    var movieObj = JSON.parse(body).results[0];
+	    var movieID =  movieObj.id;
+	    console.log(movieID);
+  	}else{
+  		console.log(error);
+  	}
+
+	});
+}
+
 function doWhatItSays(){
 	fs.readFile('random.txt', 'utf8', function(err, data){
 
@@ -83,7 +103,9 @@ function doWhatItSays(){
 			return console.log(err);
 		}
 
-		console.log(data);
+		var dataArr = data.split(',');
+
+		console.log(spotifyThis(dataArr[1]));
 	});
 }
 
@@ -96,8 +118,9 @@ switch(command){
 	case 'my-tweets':
 		getMyTweets(); break;
 	case 'spotify-this-song':
-		spotifyThis(); break;
+		spotifyThis(commandParam); break;
 	case 'movie-this':
+		movieThis(); break;
 	case 'do-what-it-says':
 		doWhatItSays(); break;
 	default: 
