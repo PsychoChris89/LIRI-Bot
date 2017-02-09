@@ -7,12 +7,13 @@ var request = require('request');
 var fs = require('fs');
 var keys = require("./keys.js");
 var tweetsArray = [];
-var command = process.argv[2];
+var inputCommand = process.argv[2];
 var commandParam = process.argv[3];
 
 
 
 var twitterKeys = keys.twitterKeys;
+var tmdbKey = keys.tmdbKey;
 
 console.log(twitterKeys.consumer_key);
 
@@ -26,6 +27,25 @@ var client = new Twitter({
 
 
 //-----------------------FUNCTIONS-----------------------------------------------
+
+function processCommands(command, commandParam){
+
+	switch(command){
+
+	case 'my-tweets':
+		getMyTweets(); break;
+	case 'spotify-this-song':
+		spotifyThis(commandParam); break;
+	case 'movie-this':
+		movieThis(); break;
+	case 'do-what-it-says':
+		doWhatItSays(); break;
+	default: 
+		console.log("Invalid command. Please type any of the following commnds: my-tweets spotify-this-song movie-this or do-what-it-says");
+}
+
+
+}
 
 function getMyTweets(){
 
@@ -78,7 +98,7 @@ function spotifyThis(song){
 
 function movieThis(){
 
-	request("https://api.themoviedb.org/3/search/movie?api_key=8d5f41f6535c312ee8ea248cecd733f7&query=Jack+Reacher", function(error, response, body) {
+	request("https://api.themoviedb.org/3/search/movie?api_key=" + tmdbKey + "&query=Jack+Reacher", function(error, response, body) {
 
   	// If there were no errors and the response code was 200 (i.e. the request was successful)...
   	if (!error && response.statusCode === 200) {
@@ -87,8 +107,23 @@ function movieThis(){
     //console.log(response.IncomingMessage.body.results);
 	    console.log(JSON.parse(body).results[0]);
 	    var movieObj = JSON.parse(body).results[0];
+	    console.log("--------Title-----------");
+	    console.log("--------Release Date-----------");
+	    console.log("--------Rating-----------");
+	    console.log("--------Produced in-----------");
+	    console.log("--------Actors-----------");
+	    console.log("--------Title-----------");
+
 	    var movieID =  movieObj.id;
 	    console.log(movieID);
+
+	    var queryURL = "https://api.themoviedb.org/3/movie/" + movieID + "?api_key=8d5f41f6535c312ee8ea248cecd733f7";
+
+	    request(queryURL, function(error, response, body) {
+	    	console.log(JSON.parse(body));
+	    });
+
+
   	}else{
   		console.log(error);
   	}
@@ -105,7 +140,8 @@ function doWhatItSays(){
 
 		var dataArr = data.split(',');
 
-		console.log(spotifyThis(dataArr[1]));
+		//console.log(spotifyThis(dataArr[1]));
+		processCommands(dataArr[0], dataArr[1]);
 	});
 }
 
@@ -113,16 +149,4 @@ function doWhatItSays(){
 
 //-------------------------MAIN PROCESS-------------------------------------------
 
-switch(command){
-
-	case 'my-tweets':
-		getMyTweets(); break;
-	case 'spotify-this-song':
-		spotifyThis(commandParam); break;
-	case 'movie-this':
-		movieThis(); break;
-	case 'do-what-it-says':
-		doWhatItSays(); break;
-	default: 
-		console.log("Invalid command. Please type any of the following commnds: my-tweets spotify-this-song movie-this or do-what-it-says");
-}
+processCommands(inputCommand, commandParam);
