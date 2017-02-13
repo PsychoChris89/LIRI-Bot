@@ -69,6 +69,11 @@ function getMyTweets(){
 
 function spotifyThis(song){
 
+	//If user has not specified a song , default to "Radioactive" imagine dragons
+	if(trim(song) === ""){
+		song = "Radioactive";
+	}
+
 	spotify.search({ type: 'track', query: song}, function(err, data) {
     if (err) {
         console.log('Error occurred: ' + err);
@@ -96,6 +101,11 @@ function spotifyThis(song){
 }
 
 function movieThis(movieName){
+
+	//If user has not specified a movie Name , default to "Radioactive" imagine dragons
+	if(trim(movieName) === ""){
+		movieName = "Mr. Nobody";
+	}
 
 	request("https://api.themoviedb.org/3/search/movie?api_key=" + tmdbKey + "&query=" + movieName, function(error, response, body) {
 
