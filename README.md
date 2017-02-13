@@ -45,4 +45,6 @@ This will show your last 20 tweets and when they were created at in your termina
 * If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.'
 
    
+4: node liri.js do-what-it-says
 
+This will output the command placed in random.txt file
